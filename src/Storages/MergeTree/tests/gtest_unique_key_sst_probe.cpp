@@ -485,6 +485,7 @@ TEST_F(SSTFixture, WriteFromBlockConstUKColumnAccepted)
 #include <Core/Names.h>
 #include <DataTypes/DataTypesNumber.h>
 #include <Common/Exception.h>
+#include <Common/tests/gtest_global_context.h>
 
 #include <filesystem>
 #include <string>
@@ -493,7 +494,7 @@ using namespace DB;
 
 TEST(UniqueKeyNoRocksDB, StaticWritersThrowSupportIsDisabled)
 {
-    auto tmp_path = std::filesystem::temp_directory_path()
+    std::filesystem::path tmp_path = std::filesystem::temp_directory_path()
         / ("gtest_unique_key_no_rocksdb_"
            + std::to_string(::testing::UnitTest::GetInstance()->random_seed())
            + "_" + std::to_string(reinterpret_cast<uintptr_t>(&tmp_path)));
@@ -532,7 +533,7 @@ TEST(UniqueKeyNoRocksDB, StaticWritersThrowSupportIsDisabled)
 
 TEST(UniqueKeyNoRocksDB, ConstructorThrowsSupportIsDisabled)
 {
-    auto tmp_path = std::filesystem::temp_directory_path()
+    std::filesystem::path tmp_path = std::filesystem::temp_directory_path()
         / ("gtest_unique_key_no_rocksdb_ctor_"
            + std::to_string(::testing::UnitTest::GetInstance()->random_seed())
            + "_" + std::to_string(reinterpret_cast<uintptr_t>(&tmp_path)));
