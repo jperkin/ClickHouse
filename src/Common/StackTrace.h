@@ -17,6 +17,11 @@
 #   define _XOPEN_SOURCE 700
 #endif
 #include <ucontext.h>
+#ifdef OS_SUNOS
+#   undef ERR
+#   undef FS
+#   undef SS
+#endif
 
 struct NoCapture
 {
