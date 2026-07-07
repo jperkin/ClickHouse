@@ -17,6 +17,9 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
 elseif (CMAKE_SYSTEM_NAME MATCHES "SunOS")
     set (OS_SUNOS 1)
     add_definitions(-D OS_SUNOS)
+    # The bundled OpenLDAP requires pre-generated per-platform configuration
+    # headers (see contrib/openldap-cmake), which do not exist for SunOS yet.
+    set (ENABLE_LDAP OFF CACHE INTERNAL "")
 else ()
     message (FATAL_ERROR "Platform ${CMAKE_SYSTEM_NAME} is not supported")
 endif ()
