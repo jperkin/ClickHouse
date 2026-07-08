@@ -1,3 +1,5 @@
+#include "config.h"
+
 #if !defined(SANITIZER)
 
 #include <gtest/gtest.h>
@@ -70,6 +72,8 @@ void checkMemory(auto allocation_callback, auto deallocation_callback)
     ASSERT_LE(static_cast<double>(freed_global), static_cast<double>(allocation_size) * 1.1);
 }
 
+/// Raw malloc/realloc tracking exists only where the wrappers in src/Common/malloc.cpp are compiled.
+#if USE_JEMALLOC && (defined(OS_LINUX) || defined(OS_FREEBSD))
 TEST(AllocationInterceptors, MallocIncreasesTheMemoryTracker)
 {
     checkMemory([&]()
@@ -81,6 +85,7 @@ TEST(AllocationInterceptors, MallocIncreasesTheMemoryTracker)
         return ptr;
     }, [&](void * ptr) { free(ptr); });
 }
+#endif
 
 TEST(AllocationInterceptors, NewDeleteIncreasesTheMemoryTracker)
 {
@@ -94,6 +99,7 @@ TEST(AllocationInterceptors, NewDeleteIncreasesTheMemoryTracker)
     }, [&](const char * ptr) { delete[] ptr; });
 }
 
+#if USE_JEMALLOC && (defined(OS_LINUX) || defined(OS_FREEBSD))
 TEST(AllocationInterceptors, FailedReallocPreservesOldAllocationAccounting)
 {
     MainThreadStatus::getInstance();
@@ -142,6 +148,7 @@ TEST(AllocationInterceptors, FailedReallocPreservesOldAllocationAccounting)
     EXPECT_GE(static_cast<double>(freed_global), static_cast<double>(allocation_size) * 0.95);
     EXPECT_LE(static_cast<double>(freed_global), static_cast<double>(allocation_size) * 1.1);
 }
+#endif
 
 TEST(AllocationInterceptors, MallocZeroFreeDoesNotCauseNegativeDrift)
 {
